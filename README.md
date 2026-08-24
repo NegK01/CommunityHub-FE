@@ -1,75 +1,146 @@
-# Nuxt Minimal Starter
+# CommunityHub - Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Frontend de la plataforma comunitaria CommunityHub, construido con Nuxt 4, Vue 3, TypeScript, SASS y capacidades PWA para trabajar en conjunto con el backend `CommunityHub-BE`.
 
-## Setup
+---
 
-Make sure to install dependencies:
+## Requisitos Previos
+
+- Node.js 22.19.0 o superior
+- npm 10.x o superior
+- Backend `CommunityHub-BE` en ejecucion
+
+---
+
+## Instalacion y Configuracion
+
+1. Instalar dependencias:
 
 ```bash
-# npm
+cd CommunityHub-FE
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+2. Configurar variables de entorno:
+Crear un archivo `.env` en la raiz del proyecto con el siguiente contenido:
 
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+```env
+NUXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
 ```
 
-## Production
+3. Verificar que el backend este disponible en el puerto configurado y con acceso a MongoDB.
 
-Build the application for production:
+---
 
-```bash
-# npm
-npm run build
+## Scripts Disponibles
 
-# pnpm
-pnpm build
+- `npm run dev`: Inicia el frontend en modo desarrollo en `http://localhost:3001`.
+- `npm run build`: Genera la compilacion de produccion con soporte PWA.
+- `npm run preview`: Levanta la compilacion generada para pruebas locales.
+- `npm run generate`: Genera la version estatica del proyecto cuando aplique.
 
-# yarn
-yarn build
+---
 
-# bun
-bun run build
+## Funcionalidades Implementadas
+
+### 1. Autenticacion
+
+- Inicio de sesion con JWT consumiendo `/api/auth/login`
+- Registro de usuarios consumiendo `/api/auth/register`
+- Restauracion de sesion mediante `/api/auth/me`
+- Cierre de sesion consumiendo `/api/auth/logout`
+
+### 2. Dashboard
+
+- Dashboard por rol (`user`, `organizer`, `admin`)
+- Resumen de metricas y accesos rapidos
+- Persistencia visual cuando la aplicacion entra en modo offline
+
+### 3. Modulos Principales
+
+- Eventos:
+  - Listado con filtros por texto, categoria, ubicacion, fecha, proximidad y cupos
+  - Creacion y edicion para `organizer` y `admin`
+  - Cancelacion de eventos para duenio o administrador
+  - Favoritos e inscripciones desde la interfaz
+
+- Categorias:
+  - Listado general para cualquier usuario autenticado
+  - Creacion, edicion y desactivacion para `admin`
+
+- Usuarios:
+  - Busqueda, filtrado, cambio de roles y eliminacion para `admin`
+
+- Notificaciones:
+  - Listado del usuario autenticado
+  - Marcado individual y masivo como leidas
+
+- Favoritos:
+  - Consulta y eliminacion de eventos favoritos
+
+- Inscripciones:
+  - Consulta y cancelacion de inscripciones activas
+
+- Perfil:
+  - Actualizacion de nombre, apellido y foto de perfil
+
+### 4. PWA y Offline
+
+- Manifest configurado para instalacion
+- Service worker generado con `@vite-pwa/nuxt`
+- Cache de assets y respuestas GET del API
+- Pantalla `/offline` para navegacion sin conexion
+- Banner de estado de red dentro de la aplicacion
+- Recuperacion de datos cacheados para dashboard, eventos, categorias, usuarios, favoritos, inscripciones y notificaciones
+
+### 5. Estilo y Estructura
+
+- SASS como capa de estilos global y por componente
+- Paginas construidas con componentes de archivo unico separados en `template`, `script` y `style`
+- Layout autenticado y layout de acceso
+
+---
+
+## Estructura General
+
+```text
+CommunityHub-FE/
+├── app/
+│   ├── assets/
+│   ├── components/
+│   ├── layouts/
+│   └── pages/
+├── assets/
+├── composables/
+├── middleware/
+├── plugins/
+├── public/
+├── types/
+├── nuxt.config.ts
+└── package.json
 ```
 
-Locally preview production build:
+---
 
-```bash
-# npm
-npm run preview
+## Consideraciones Tecnicas
 
-# pnpm
-pnpm preview
+- El frontend se sirve en el puerto `3001`.
+- El backend debe exponer su API bajo `/api`.
+- Nuxt 4.5.2 requiere Node.js `22.19.0` o superior. Con versiones anteriores puede funcionar parcialmente, pero aparecen advertencias de compatibilidad.
+- Para build de produccion en entornos Windows con restricciones de PowerShell puede ser necesario usar `npm.cmd run build`.
 
-# yarn
-yarn preview
+---
 
-# bun
-bun run preview
-```
+## Credenciales de Prueba
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Si se ejecuto el `seed` del backend, se pueden usar:
+
+- Administrador: `admin@communityhub.com` / `password123`
+- Organizador: `organizer@communityhub.com` / `password123`
+- Usuario: `user@communityhub.com` / `password123`
+
+---
+
+## Licencia
+
+Este proyecto se distribuye bajo la licencia MIT.

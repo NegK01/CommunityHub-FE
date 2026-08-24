@@ -2,6 +2,9 @@
   <div>
     <VitePwaManifest />
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <NuxtLoadingIndicator color="#0f766e" />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>

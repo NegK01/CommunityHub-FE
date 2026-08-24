@@ -2,15 +2,29 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  css: ['~/assets/styles/main.scss'],
+  devServer: {
+    port: 3001
+  },
   modules: [
     '@vite-pwa/nuxt'
   ],
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api'
+    }
+  },
   pwa: {
+    registerType: 'autoUpdate',
+    includeAssets: ['favicon.ico', 'robots.txt', 'pwa-192x192.png', 'pwa-512x512.png'],
     manifest: {
       name: 'Community Hub',
       short_name: 'CommunityHub',
-      description: 'Community Hub Application',
-      theme_color: '#ffffff',
+      description: 'Plataforma comunitaria para gestionar actividades, eventos y participacion ciudadana.',
+      theme_color: '#0f172a',
+      background_color: '#f6f7fb',
+      display: 'standalone',
+      start_url: '/dashboard',
       icons: [
         {
           src: 'pwa-192x192.png',
@@ -25,7 +39,39 @@ export default defineNuxtConfig({
       ]
     },
     workbox: {
-      navigateFallback: '/',
+      navigateFallback: '/offline',
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
+      runtimeCaching: [
+        {
+          urlPattern: '^https?:\\/\\/.*\\/api\\/.*',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'communityhub-api',
+            networkTimeoutSeconds: 5,
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        },
+        {
+          urlPattern: '^https?:\\/\\/.*\\/_nuxt\\/.*',
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'communityhub-assets'
+          }
+        },
+        {
+          urlPattern: '^https?:\\/\\/.*\\/(.*\\.(?:png|jpg|jpeg|svg|webp|gif|woff2|woff|ttf))$',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'communityhub-media',
+            expiration: {
+              maxEntries: 80,
+              maxAgeSeconds: 60 * 60 * 24 * 30
+            }
+          }
+        }
+      ]
     },
     devOptions: {
       enabled: true,
