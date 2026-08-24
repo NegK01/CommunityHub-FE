@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -10,8 +12,9 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt'
   ],
   runtimeConfig: {
+    apiTarget: process.env.NUXT_API_TARGET || 'http://localhost:3000/api',
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api'
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || '/api-proxy'
     }
   },
   pwa: {
@@ -43,7 +46,7 @@ export default defineNuxtConfig({
       globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
       runtimeCaching: [
         {
-          urlPattern: '^https?:\\/\\/.*\\/api\\/.*',
+          urlPattern: '^https?:\\/\\/.*\\/(api|api-proxy)\\/.*',
           handler: 'NetworkFirst',
           options: {
             cacheName: 'communityhub-api',

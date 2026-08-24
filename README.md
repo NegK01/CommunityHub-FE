@@ -25,10 +25,12 @@ npm install
 Crear un archivo `.env` en la raiz del proyecto con el siguiente contenido:
 
 ```env
-NUXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+NUXT_API_TARGET=http://localhost:3000/api
+NUXT_PUBLIC_API_BASE_URL=/api-proxy
 ```
 
 3. Verificar que el backend este disponible en el puerto configurado y con acceso a MongoDB.
+El frontend usa un proxy interno (`/api-proxy`) para reenviar solicitudes al backend y evitar problemas de CORS o dominios distintos en PWA y dispositivos moviles.
 
 ---
 
@@ -126,6 +128,7 @@ CommunityHub-FE/
 
 - El frontend se sirve en el puerto `3001`.
 - El backend debe exponer su API bajo `/api`.
+- El navegador no necesita conectarse directamente al backend si se usa el proxy interno de Nuxt.
 - Nuxt 4.5.2 requiere Node.js `22.19.0` o superior. Con versiones anteriores puede funcionar parcialmente, pero aparecen advertencias de compatibilidad.
 - Para build de produccion en entornos Windows con restricciones de PowerShell puede ser necesario usar `npm.cmd run build`.
 
