@@ -37,6 +37,7 @@ const toQueryString = (filters: Record<string, string | boolean | undefined>) =>
 
 export function useCommunityData() {
   const api = useApi()
+  const { user, patchUser } = useAuth()
 
   const dashboard = useState<DashboardData | null>('dashboard-data', () => null)
   const events = useState<Event[]>('events-data', () => [])
@@ -139,15 +140,24 @@ export function useCommunityData() {
     await fetchNotifications()
   }
 
-  const updateUser = async (userId: string, payload: Record<string, unknown>) => {
+  const updateUser = async (
+    userId: string,
+    payload: Record<string, unknown>,
+    filters: { search?: string; rol?: string } = {}
+  ) => {
     const updated = await api.request<User>(`/users/${userId}`, { method: 'PUT', body: payload })
-    await fetchUsers()
+
+    if (user.value?._id === updated._id) {
+      patchUser(updated)
+    }
+
+    await fetchUsers(filters)
     return updated
   }
 
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (userId: string, filters: { search?: string; rol?: string } = {}) => {
     await api.request(`/users/${userId}`, { method: 'DELETE' })
-    await fetchUsers()
+    await fetchUsers(filters)
   }
 
   const registerToEvent = async (eventId: string) => {
