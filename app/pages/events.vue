@@ -33,6 +33,15 @@
           <span>Fecha</span>
           <input v-model="filters.date" type="date" class="input" />
         </label>
+        <label>
+          <span>Estado</span>
+          <select v-model="filters.status" class="select">
+            <option value="activo">Solo activos</option>
+            <option value="finalizado">Finalizados</option>
+            <option value="cancelado">Cancelados</option>
+            <option value="all">Todos los estados</option>
+          </select>
+        </label>
       </div>
 
       <div class="module-page__toggles">
@@ -89,6 +98,14 @@
           <span>Imagen (URL opcional)</span>
           <input v-model="eventForm.imagen" class="input" />
         </label>
+        <label v-if="editingId" class="editor__full">
+          <span>Estado del evento</span>
+          <select v-model="eventForm.estado" class="select" required>
+            <option value="activo">Activo</option>
+            <option value="cancelado">Cancelado</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </label>
 
         <button type="submit" class="button button-primary">
           {{ editingId ? 'Guardar cambios' : 'Crear evento' }}
@@ -123,12 +140,20 @@
           Editar
         </button>
         <button
-          v-if="canManageEvent(event)"
+          v-if="canManageEvent(event) && event.estado === 'activo'"
           type="button"
           class="button button-danger"
           @click="cancelCurrentEvent(event._id)"
         >
           Cancelar
+        </button>
+        <button
+          v-if="canManageEvent(event) && event.estado === 'cancelado'"
+          type="button"
+          class="button button-primary"
+          @click="restoreCurrentEvent(event._id)"
+        >
+          Restaurar
         </button>
       </EventCard>
     </div>
@@ -168,6 +193,7 @@ const filters = reactive({
   category: '',
   location: '',
   date: '',
+  status: 'activo',
   upcoming: true,
   available: false
 })
@@ -182,7 +208,8 @@ const emptyForm = () => ({
   hora: '',
   ubicacion: '',
   capacidadMaxima: 20,
-  imagen: ''
+  imagen: '',
+  estado: 'activo'
 })
 const eventForm = reactive(emptyForm())
 
@@ -203,7 +230,9 @@ const applyFilters = async () => {
     location: filters.location,
     date: filters.date,
     upcoming: filters.upcoming,
-    available: filters.available
+    available: filters.available,
+    status: filters.status === 'all' ? undefined : filters.status,
+    all: filters.status === 'all' ? true : undefined
   })
 }
 
@@ -229,7 +258,8 @@ const editEvent = (event: Event) => {
     hora: event.hora,
     ubicacion: event.ubicacion,
     capacidadMaxima: event.capacidadMaxima,
-    imagen: event.imagen || ''
+    imagen: event.imagen || '',
+    estado: event.estado || 'activo'
   })
 }
 
@@ -279,6 +309,11 @@ const toggleFavorite = async (eventId: string) => {
 
 const cancelCurrentEvent = async (eventId: string) => {
   await cancelEvent(eventId)
+  await applyFilters()
+}
+
+const restoreCurrentEvent = async (eventId: string) => {
+  await updateEvent(eventId, { estado: 'activo' })
   await applyFilters()
 }
 </script>

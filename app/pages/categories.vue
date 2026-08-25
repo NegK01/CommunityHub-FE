@@ -49,8 +49,21 @@
         <p>{{ category.descripcion || 'Sin descripcion registrada.' }}</p>
         <div v-if="isAdmin" class="category-card__actions">
           <button type="button" class="button button-secondary" @click="editCategory(category)">Editar</button>
-          <button type="button" class="button button-danger" @click="disableCurrentCategory(category._id)">
+          <button
+            v-if="category.activa"
+            type="button"
+            class="button button-danger"
+            @click="disableCurrentCategory(category._id)"
+          >
             Desactivar
+          </button>
+          <button
+            v-else
+            type="button"
+            class="button button-primary"
+            @click="restoreCategory(category._id)"
+          >
+            Restaurar
           </button>
         </div>
       </article>
@@ -104,6 +117,11 @@ const submitCategory = async () => {
 
 const disableCurrentCategory = async (categoryId: string) => {
   await disableCategory(categoryId)
+}
+
+const restoreCategory = async (categoryId: string) => {
+  await updateCategory(categoryId, { activa: true })
+  await fetchCategories(isAdmin.value)
 }
 </script>
 

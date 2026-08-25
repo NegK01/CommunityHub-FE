@@ -54,7 +54,8 @@ const categoryObject = computed(() => {
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('es-CR', {
-    dateStyle: 'medium'
+    dateStyle: 'medium',
+    timeZone: 'UTC'
   }).format(new Date(value))
 </script>
 

@@ -16,6 +16,8 @@ interface EventFilters {
   upcoming?: boolean
   available?: boolean
   organizer?: string
+  all?: boolean
+  status?: string
 }
 
 const toQueryString = (filters: Record<string, string | boolean | undefined>) => {
@@ -54,10 +56,12 @@ export function useCommunityData() {
       search: filters.search,
       category: filters.category,
       location: filters.location,
-      date: filters.date,
+      date: filters.date ? filters.date.split('T')[0] : undefined,
       upcoming: filters.upcoming,
       available: filters.available,
-      organizer: filters.organizer
+      organizer: filters.organizer,
+      status: filters.status,
+      all: filters.all
     })
 
     events.value = await api.request<Event[]>(`/events${query}`, { cacheKey: `events:${query || 'all'}` })
